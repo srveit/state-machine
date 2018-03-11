@@ -20,5 +20,9 @@
   "bugs": {
     "url": "https://github.com/srveit/state-machine/issues"
   },
-  "homepage": "https://github.com/srveit/state-machine#readme"
+  "homepage": "https://github.com/srveit/state-machine#readme",
+  "dependencies": {
+    "lodash": "^4.17.5",
+    "moment": "^2.21.0"
+  }
 }
