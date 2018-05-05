@@ -2,12 +2,21 @@
 const _ = require('lodash'),
   moment = require('moment');
 
-const createStateMachine = definition => {
-  definition = Object.assign({}, definition);
-  let currentState = definition.states[0];
-  console.info(moment().toISOString(), 'new state', currentState.name);
+const nullLogger = {
+  trace: () => true,
+  debug: () => true,
+  info: () => true,
+  warn: () => true,
+  error: () => true,
+  fatal: () => true
+};
+
+const createStateMachine = ({states, logger}) => {
   const methods = {},
-    timers = [];
+    timers = [],
+    log = logger || nullLogger;
+  let currentState = states[0];
+  log.info({action: 'stateChange', state: currentState.name});
 
   const addMethod = (name, method) => methods[name] = method;
 
@@ -27,17 +36,22 @@ const createStateMachine = definition => {
   };
 
   const handleEvent = event => {
-    console.info(moment().toISOString(), 'event', event);
+    log.info({action: 'handleEvent', event});
     const eventHandler = currentState.events[event];
     if (!eventHandler) {
-//      console.warn('no event handler for', event);
+      log.debug({message: 'no event handler found', event});
       return;
     }
     if (eventHandler.nextState) {
+      let previousStateName = currentState && currentState.name;
       clearTimers();
       currentState =
-        definition.states.find(state => state.name === eventHandler.nextState);
-      console.info(moment().toISOString(), 'new state', currentState && currentState.name);
+        states.find(state => state.name === eventHandler.nextState);
+      log.info({
+        action: 'stateChange',
+        state: currentState && currentState.name,
+        previousState: previousStateName
+      });
     }
     let actions = eventHandler.actions ||
           (eventHandler.action ? [eventHandler.action] : []);
@@ -51,10 +65,10 @@ const createStateMachine = definition => {
         args = action.slice(1);
       }
       if (methods[method]) {
-        console.info(moment().toISOString(), 'action', method, args);
+        log.info({action: method, args});
         methods[method].apply(null, args);
       } else {
-        console.log('no method for', method);
+        log.log({message: 'no method found', method});
       }
     });
   };
