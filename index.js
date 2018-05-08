@@ -1,6 +1,7 @@
 'use strict';
 const _ = require('lodash'),
-  moment = require('moment');
+  moment = require('moment'),
+  generateDot = require('./generateDot');
 
 const nullLogger = {
   trace: () => true,
@@ -12,67 +13,69 @@ const nullLogger = {
 };
 
 const createStateMachine = ({states, name, logger}) => {
-  const methods = {},
-    timers = [],
-    log = logger || nullLogger;
   let currentState = states[0];
   log.info({name, action: 'stateChange', state: currentState.name});
+  const methods = {},
+    timers = [],
+    log = logger || nullLogger,
 
-  const addMethod = (name, method) => methods[name] = method;
+    addMethod = (name, method) => methods[name] = method,
 
-  const setTimer = duration => {
-    timers.push(setTimeout(
-      () => {
-        handleEvent('timer expired');
-      },
-      duration
-    ));
-  };
+    setTimer = duration => {
+      timers.push(setTimeout(
+        () => {
+          handleEvent('timer expired');
+        },
+        duration
+      ));
+    },
+    
+    clearTimers = () => {
+      while (timers.length > 0) {
+        clearTimeout(timers.pop());
+      }
+    },
 
-  const clearTimers = () => {
-    while (timers.length > 0) {
-      clearTimeout(timers.pop());
-    }
-  };
-
-  const handleEvent = event => {
-    log.info({name, action: 'handleEvent', event});
-    const eventHandler = currentState.events[event];
-    if (!eventHandler) {
-      log.debug({name, message: 'no event handler found', event});
-      return;
-    }
-    if (eventHandler.nextState) {
-      let previousStateName = currentState && currentState.name;
-      clearTimers();
-      currentState =
-        states.find(state => state.name === eventHandler.nextState);
-      log.info({
-        name,
-        action: 'stateChange',
-        state: currentState && currentState.name,
-        previousState: previousStateName
+    handleEvent = event => {
+      log.info({name, action: 'handleEvent', event});
+      const eventHandler = currentState.events[event];
+      if (!eventHandler) {
+        log.debug({name, message: 'no event handler found', event});
+        return;
+      }
+      if (eventHandler.nextState) {
+        let previousStateName = currentState && currentState.name;
+        clearTimers();
+        currentState =
+          states.find(state => state.name === eventHandler.nextState);
+        log.info({
+          name,
+          action: 'stateChange',
+          state: currentState && currentState.name,
+          previousState: previousStateName
+        });
+      }
+      let actions = eventHandler.actions ||
+        (eventHandler.action ? [eventHandler.action] : []);
+      actions.forEach(action => {
+        let method, args;
+        if (_.isString(action)) {
+          method = action;
+          args = [];
+        } else {
+          method = action[0];
+          args = action.slice(1);
+        }
+        if (methods[method]) {
+          log.info({name, action: method, args});
+          methods[method].apply(null, args);
+        } else {
+          log.log({name, message: 'no method found', method});
+        }
       });
-    }
-    let actions = eventHandler.actions ||
-          (eventHandler.action ? [eventHandler.action] : []);
-    actions.forEach(action => {
-      let method, args;
-      if (_.isString(action)) {
-        method = action;
-        args = [];
-      } else {
-        method = action[0];
-        args = action.slice(1);
-      }
-      if (methods[method]) {
-        log.info({name, action: method, args});
-        methods[method].apply(null, args);
-      } else {
-        log.log({name, message: 'no method found', method});
-      }
-    });
-  };
+    },
+
+    dot = () => generateDot(name, states);
 
   addMethod(
     'setTimer',
@@ -81,9 +84,11 @@ const createStateMachine = ({states, name, logger}) => {
 
   return Object.freeze({
     addMethod,
-    handleEvent,
-    currentState: () => currentState
+    currentState: () => currentState,
+    dot,
+    handleEvent
   });
 };
 
 exports.createStateMachine = createStateMachine;
+exports.generateDot = generateDot;
