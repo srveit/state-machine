@@ -14,7 +14,6 @@ const nullLogger = {
 
 const createStateMachine = ({states, name, logger}) => {
   let currentState = states[0];
-  log.info({name, action: 'stateChange', state: currentState.name});
   const methods = {},
     timers = [],
     log = logger || nullLogger,
@@ -81,6 +80,8 @@ const createStateMachine = ({states, name, logger}) => {
     'setTimer',
     setTimer
   );
+
+  log.info({name, action: 'stateChange', state: currentState.name});
 
   return Object.freeze({
     addMethod,
