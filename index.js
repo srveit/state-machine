@@ -11,12 +11,12 @@ const nullLogger = {
   fatal: () => true
 };
 
-const createStateMachine = ({states, logger}) => {
+const createStateMachine = ({states, name, logger}) => {
   const methods = {},
     timers = [],
     log = logger || nullLogger;
   let currentState = states[0];
-  log.info({action: 'stateChange', state: currentState.name});
+  log.info({name, action: 'stateChange', state: currentState.name});
 
   const addMethod = (name, method) => methods[name] = method;
 
@@ -36,10 +36,10 @@ const createStateMachine = ({states, logger}) => {
   };
 
   const handleEvent = event => {
-    log.info({action: 'handleEvent', event});
+    log.info({name, action: 'handleEvent', event});
     const eventHandler = currentState.events[event];
     if (!eventHandler) {
-      log.debug({message: 'no event handler found', event});
+      log.debug({name, message: 'no event handler found', event});
       return;
     }
     if (eventHandler.nextState) {
@@ -48,6 +48,7 @@ const createStateMachine = ({states, logger}) => {
       currentState =
         states.find(state => state.name === eventHandler.nextState);
       log.info({
+        name,
         action: 'stateChange',
         state: currentState && currentState.name,
         previousState: previousStateName
@@ -65,10 +66,10 @@ const createStateMachine = ({states, logger}) => {
         args = action.slice(1);
       }
       if (methods[method]) {
-        log.info({action: method, args});
+        log.info({name, action: method, args});
         methods[method].apply(null, args);
       } else {
-        log.log({message: 'no method found', method});
+        log.log({name, message: 'no method found', method});
       }
     });
   };
