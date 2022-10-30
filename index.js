@@ -1,7 +1,5 @@
 'use strict';
-const _ = require('lodash'),
-  moment = require('moment'),
-  generateDot = require('./generateDot');
+const generateDot = require('./generateDot');
 
 const nullLogger = {
   trace: () => true,
@@ -58,7 +56,7 @@ const createStateMachine = ({states, name, logger}) => {
         (eventHandler.action ? [eventHandler.action] : []);
       actions.forEach(action => {
         let method, args;
-        if (_.isString(action)) {
+        if (typeof action == 'string') {
           method = action;
           args = [];
         } else {
