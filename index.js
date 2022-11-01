@@ -85,7 +85,8 @@ const createStateMachine = ({states, name, logger}) => {
     addMethod,
     currentState: () => currentState,
     dot,
-    handleEvent
+    handleEvent,
+    name,
   });
 };
 
