@@ -3,7 +3,7 @@
   "version": "1.0.2",
   "description": "Javascript state machine",
   "bin": {
-    "stateMachine2Pdf": ".bin/stateMachine2Pdf.js"
+    "stateMachine2Pdf": "./bin/stateMachine2Pdf.js"
   },
   "main": "index.js",
   "scripts": {
