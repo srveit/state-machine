@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning][semantic-versioning].
 
 ## [Unreleased]
 
+## [1.0.2] - 2022-11-12
+
+### Changed
+
+- added `stateMachine2Pdf` binary to `package.json`
+
 ## [1.0.1] - 2022-11-12
 
 ### Added
@@ -23,7 +29,8 @@ and this project adheres to [Semantic Versioning][semantic-versioning].
 
 - Initial code
 
-[Unreleased]: https://github.com/srveit/state-machine/compare/v1.0.1...HEAD
+[Unreleased]: https://github.com/srveit/state-machine/compare/v1.0.2...HEAD
+[1.0.2]: https://github.com/srveit/state-machine/releases/tag/v1.0.2
 [1.0.1]: https://github.com/srveit/state-machine/releases/tag/v1.0.1
 [1.0.0]: https://github.com/srveit/state-machine/releases/tag/v1.0.0
 [keep-a-changelog]: https://keepachangelog.com/en/1.1.0/
