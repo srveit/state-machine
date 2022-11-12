@@ -1,8 +1,9 @@
 {
   "name": "state-machine",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Javascript state machine",
   "bin": {
+    "stateMachine2Dot": "./bin/stateMachine2Dot.js",
     "stateMachine2Pdf": "./bin/stateMachine2Pdf.js"
   },
   "main": "index.js",

@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning][semantic-versioning].
 
 ## [Unreleased]
 
+## [1.0.3] - 2022-11-12
+
+### Changed
+
+- added `stateMachine2Dot` binary to `package.json`
+- fixed dot formatting
+
 ## [1.0.2] - 2022-11-12
 
 ### Changed
@@ -29,7 +36,8 @@ and this project adheres to [Semantic Versioning][semantic-versioning].
 
 - Initial code
 
-[Unreleased]: https://github.com/srveit/state-machine/compare/v1.0.2...HEAD
+[Unreleased]: https://github.com/srveit/state-machine/compare/v1.0.3...HEAD
+[1.0.3]: https://github.com/srveit/state-machine/releases/tag/v1.0.3
 [1.0.2]: https://github.com/srveit/state-machine/releases/tag/v1.0.2
 [1.0.1]: https://github.com/srveit/state-machine/releases/tag/v1.0.1
 [1.0.0]: https://github.com/srveit/state-machine/releases/tag/v1.0.0

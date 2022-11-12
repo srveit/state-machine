@@ -1,4 +1,5 @@
 # state-machine
+
 Javascript state machine
 
 ## Generating state machine diagram
