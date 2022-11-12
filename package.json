@@ -4,7 +4,7 @@
   "description": "Javascript state machine",
   "bin": {
     "stateMachine2Pdf": ".bin/stateMachine2Pdf.js"
-  }
+  },
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
