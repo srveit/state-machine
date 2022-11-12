@@ -1,5 +1,5 @@
-'use strict';
-const generateDot = require('./generateDot');
+'use strict'
+const generateDot = require('./lib/generateDot')
 
 const nullLogger = {
   trace: () => true,
@@ -7,79 +7,72 @@ const nullLogger = {
   info: () => true,
   warn: () => true,
   error: () => true,
-  fatal: () => true
-};
+  fatal: () => true,
+}
 
-const createStateMachine = ({states, name, logger}) => {
-  let currentState = states[0];
+const createStateMachine = ({ states, name, logger }) => {
+  let currentState = states[0]
   const methods = {},
     timers = [],
     log = logger || nullLogger,
-
-    addMethod = (name, method) => methods[name] = method,
-
-    setTimer = duration => {
-      timers.push(setTimeout(
-        () => {
-          handleEvent('timer expired');
-        },
-        duration
-      ));
+    addMethod = (name, method) => (methods[name] = method),
+    setTimer = (duration) => {
+      timers.push(
+        setTimeout(() => {
+          handleEvent('timer expired')
+        }, duration)
+      )
     },
-    
     clearTimers = () => {
       while (timers.length > 0) {
-        clearTimeout(timers.pop());
+        clearTimeout(timers.pop())
       }
     },
-
-    handleEvent = event => {
-      log.info({name, action: 'handleEvent', event});
-      const eventHandler = currentState.events[event];
+    handleEvent = (event) => {
+      log.info({ name, action: 'handleEvent', event })
+      const eventHandler = currentState.events[event]
       if (!eventHandler) {
-        log.debug({name, message: 'no event handler found', event});
-        return;
+        log.debug({ name, message: 'no event handler found', event })
+        return
       }
       if (eventHandler.nextState) {
-        let previousStateName = currentState && currentState.name;
-        clearTimers();
-        currentState =
-          states.find(state => state.name === eventHandler.nextState);
+        let previousStateName = currentState && currentState.name
+        clearTimers()
+        currentState = states.find(
+          (state) => state.name === eventHandler.nextState
+        )
         log.info({
           name,
           action: 'stateChange',
           state: currentState && currentState.name,
-          previousState: previousStateName
-        });
+          previousState: previousStateName,
+        })
       }
-      let actions = eventHandler.actions ||
-        (eventHandler.action ? [eventHandler.action] : []);
-      actions.forEach(action => {
-        let method, args;
+      let actions =
+        eventHandler.actions ||
+        (eventHandler.action ? [eventHandler.action] : [])
+      actions.forEach((action) => {
+        let method, args
         if (typeof action == 'string') {
-          method = action;
-          args = [];
+          method = action
+          args = []
         } else {
-          method = action[0];
-          args = action.slice(1);
+          method = action[0]
+          args = action.slice(1)
         }
         if (methods[method]) {
-          log.info({name, action: method, args});
-          methods[method].apply(null, args);
+          log.info({ name, action: method, args })
+          methods[method].apply(null, args)
         } else {
-          log.log({name, message: 'no method found', method});
+          log.log({ name, message: 'no method found', method })
         }
-      });
+      })
     },
+    dot = () => generateDot(name, states)
 
-    dot = () => generateDot(name, states);
+  addMethod('setTimer', setTimer)
 
-  addMethod(
-    'setTimer',
-    setTimer
-  );
-
-  log.info({name, action: 'stateChange', state: currentState.name});
+  log.info({ name, action: 'stateChange', state: currentState.name })
 
   return Object.freeze({
     addMethod,
@@ -87,8 +80,8 @@ const createStateMachine = ({states, name, logger}) => {
     dot,
     handleEvent,
     name,
-  });
-};
+  })
+}
 
-exports.createStateMachine = createStateMachine;
-exports.generateDot = generateDot;
+exports.createStateMachine = createStateMachine
+exports.generateDot = generateDot
